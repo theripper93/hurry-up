@@ -1,0 +1,69 @@
+:root {
+  --hurry-up-font-size: 6em;
+}
+
+#combat-timer .window-content {
+  background: rgba(0, 0, 0, 0.219);
+  padding: 0;
+  margin: 0;
+  border-radius: 5px;
+}
+
+#combat-timer .window-header {
+  padding: unset;
+  line-height: unset;
+  border-bottom: unset;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  color: transparent;
+  border-radius: 5px;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  height: 10px;
+  z-index: 100;
+  background: url(/ui/denim-dark-090.png) repeat;
+  background-blend-mode: screen;
+  background-color: rgba(0, 0, 0, 1);
+}
+
+#combat-timer .combat-timer-timer-text {
+  font-size: var(--hurry-up-font-size);
+  color: rgba(255, 255, 255, 0.63);
+  text-align: center;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 100%;
+  margin-top: -0.3rem;
+  z-index: 20;
+}
+
+#combat-timer .combat-timer-timer {
+  display: flex;
+}
+
+#combat-timer .main-window {
+  display: flex;
+}
+
+#combat-timer .combat-timer-bar {
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  border-radius: 5px;
+  z-index: 10;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.089);
+  transition: width 0.5s ease-in-out;
+}
+
+#combat-timer .blinking {
+  animation: blinking-text 1s ease infinite;
+}
+
+@keyframes blinking-text {
+  50% {
+    opacity: 0;
+  }
+}
