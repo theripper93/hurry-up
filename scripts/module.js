@@ -19,15 +19,48 @@ class CombatTimer extends Application {
   }
 
   async startTimer() {
+    this.reset();
+    await this.sleep(1000)
     this.currentTime = this.time;
     this.started = true;
-    while (this.currentTime && this.started > 0) {
+    while (this.started && this.currentTime > 0) {
       if (!game?.paused) {
         this.currentTime--;
         this.updateTime();
       }
       await this.sleep(1000);
     }
+    this.onEnd();
+  }
+
+  reset(){
+    this.started = false;
+    this.isCritical = false;
+    $(this.element)
+    .find(".combat-timer-bar")
+    .css("background-color", "rgba(255, 255, 255, 0.089)");
+    $(this.element).find(".combat-timer-timer-text").removeClass("blinking");
+  }
+
+  async onEnd(){
+    this.isCritical = false;
+    this.started = false;
+    this.onCriticalEnd();
+    if(this.currentTime) return;
+    if(game.settings.get("hurry-up", "goNext") && game.user.isGM){
+      game.combat?.nextTurn()
+    }
+    const soundP = game.settings.get("hurry-up", "endSoundPath")
+    if(soundP) AudioHelper.play({src: soundP, volume: 0.8, loop: false}, false);
+  }
+
+  async onCritical(){
+    const soundP = game.settings.get("hurry-up", "critSoundPath")
+    if(soundP) this.critSound = await AudioHelper.play({src: soundP, volume: 0.8, loop: true}, false);
+  }
+
+  async onCriticalEnd(){
+    this.critSound?.stop();
   }
 
   async sleep(ms) {
@@ -46,7 +79,11 @@ class CombatTimer extends Application {
       );
     const percent = (this.currentTime / this.time) * 100;
     $(this.element).find(".combat-timer-bar").css("width", `${percent}%`);
-    if (percent <= 10) {
+    if (percent <= game.settings.get("hurry-up", "critical")) {
+      if(!this.isCritical){
+        this.isCritical = true;
+        this.onCritical();
+      }
       $(this.element)
         .find(".combat-timer-bar")
         .css("background-color", "rgba(255, 0, 0, 0.26)");
@@ -63,6 +100,14 @@ class CombatTimer extends Application {
     this.currentTime = this.time;
     this.updateTime();
     html.find(".header-button").remove();
+    if(!this.positioned){
+      this.positioned = true;
+      const top = 2
+      const left = window.innerWidth - this.element.width() - 310;
+      this.element.css({"top": top, "left": left});
+      this.position.top = top;
+      this.position.left = left;
+    }
   }
 
   getData() {
@@ -84,6 +129,7 @@ class CombatTimer extends Application {
   }
 
   static Start(time = game.settings.get("hurry-up", "timerDuration")) {
-    game.combatTimer = new CombatTimer(time).render(true).startTimer();
+    if(!game.combatTimer) game.combatTimer = new CombatTimer(time)
+    game.combatTimer.render(true).startTimer();
   }
 }

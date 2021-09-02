@@ -1,3 +1,23 @@
-Hooks.on("canvasReady",()=>{
-    CombatTimer.Start()
-})
+Hooks.on("canvasReady", () => {
+  if (!game.combat?.started) return;
+  const token = canvas.tokens.get(game?.combat?.current?.tokenId);
+  const actor = token?.actor;
+  if (actor?.hasPlayerOwner) {
+    CombatTimer.Start();
+  } else {
+    game.combatTimer.close(true);
+  }
+});
+
+Hooks.on("updateCombat", (combat, updates) => {
+  if (!game.combat?.started) return;
+  if ("turn" in updates) {
+    const token = canvas.tokens.get(game?.combat?.current?.tokenId);
+    const actor = token?.actor;
+    if (actor?.hasPlayerOwner) {
+      CombatTimer.Start();
+    } else {
+      game.combatTimer.close(true);
+    }
+  }
+});
