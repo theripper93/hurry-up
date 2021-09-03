@@ -20,11 +20,11 @@ Hooks.once("init", async function () {
     config: true,
     type: Number,
     range: {
-        min:3,
+        min:5,
         max:15,
         step:0.5,
     },
-    default: 6,
+    default: 8,
     onChange: (sett) => {
       document.documentElement.style.setProperty(
         "--hurry-up-font-size",
@@ -74,6 +74,20 @@ Hooks.once("init", async function () {
     type: String,
     default: "modules/hurry-up/sounds/Ping1.wav",
     filePicker: "audio",
+  });
+
+  game.settings.register("hurry-up", "soundVol", {
+    name: game.i18n.localize("hp.settings.soundVol.name"),
+    hint: game.i18n.localize("hp.settings.soundVol.hint"),
+    scope: "world",
+    config: true,
+    type: Number,
+    range: {
+        min:0,
+        max:1,
+        step:0.05,
+    },
+    default: 0.8,
   });
 
 });

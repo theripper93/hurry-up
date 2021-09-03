@@ -9,7 +9,7 @@ Hooks.on("canvasReady", () => {
 
 Hooks.on("updateCombat", (combat, updates) => {
   if (!game.combat?.started){
-    game.combatTimer.close(true);
+    game.combatTimer?.close(true);
     return;
   }
   if ("turn" in updates) {
@@ -18,7 +18,7 @@ Hooks.on("updateCombat", (combat, updates) => {
     if (actor?.hasPlayerOwner) {
       CombatTimer.Start();
     } else {
-      game.combatTimer.close(true);
+      game.combatTimer?.close(true);
     }
   }
 });

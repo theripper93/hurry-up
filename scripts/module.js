@@ -51,12 +51,13 @@ class CombatTimer extends Application {
       game.combat?.nextTurn()
     }
     const soundP = game.settings.get("hurry-up", "endSoundPath")
-    if(soundP) AudioHelper.play({src: soundP, volume: 0.8, loop: false}, false);
+    if(soundP) AudioHelper.play({src: soundP, volume: game.settings.get("hurry-up", "soundVol"), loop: false}, false);
   }
 
   async onCritical(){
+    this.critSound?.stop();
     const soundP = game.settings.get("hurry-up", "critSoundPath")
-    if(soundP) this.critSound = await AudioHelper.play({src: soundP, volume: 0.8, loop: true}, false);
+    if(soundP) this.critSound = await AudioHelper.play({src: soundP, volume: game.settings.get("hurry-up", "soundVol"), loop: true}, false);
   }
 
   async onCriticalEnd(){
