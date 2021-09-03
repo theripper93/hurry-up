@@ -11,3 +11,5 @@ A simple timer to hurry up your players in combat!
 - **Critical**: Chose the duration of the timer and when it goes critical, at this point the progress bar will turn red and start blinking
 - **Sounds**: Play a looping sound when the timer goes critical (defaults to ticking) and a sound when the time is over
 - **Go Next**: Automatically advance the turn tracker when a timer ends
+
+The sounds included are from GameAudioGDC https://sonniss.com/gameaudiogdc
