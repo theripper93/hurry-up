@@ -62,7 +62,7 @@ Hooks.once("init", async function () {
     scope: "world",
     config: true,
     type: String,
-    default: "modules/hurry-up/sounds/tick1.wav",
+    default: "modules/hurry-up/sounds/tick1.mp3",
     filePicker: "audio",
   });
 
@@ -72,7 +72,7 @@ Hooks.once("init", async function () {
     scope: "world",
     config: true,
     type: String,
-    default: "modules/hurry-up/sounds/Ping1.wav",
+    default: "modules/hurry-up/sounds/Ping1.mp3",
     filePicker: "audio",
   });
 
