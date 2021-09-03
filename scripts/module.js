@@ -125,6 +125,7 @@ class CombatTimer extends Application {
 
   close() {
     this.started = false;
+    this.critSound?.stop();
     super.close();
   }
 

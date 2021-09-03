@@ -21,10 +21,12 @@
   "scripts": [
       "./scripts/main.js",
       "./scripts/config.js",
-      "./scripts/module.js"
+      "./scripts/module.js",
+      "./scripts/screens.js"
   ],
   "styles": [
-      "./styles/module.css"
+      "./styles/module.css",
+      "./styles/combatScreens.css"
   ],
   "packs": [
   ],
