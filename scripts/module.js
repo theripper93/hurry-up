@@ -24,11 +24,12 @@ class CombatTimer extends Application {
     this.currentTime = this.time;
     this.started = true;
     while (this.started && this.currentTime > 0) {
+      await this.sleep(1000);
       if (!game?.paused) {
         this.currentTime--;
         this.updateTime();
+        this.checkCritical();
       }
-      await this.sleep(1000);
     }
     this.onEnd();
   }
@@ -80,6 +81,10 @@ class CombatTimer extends Application {
       );
     const percent = (this.currentTime / this.time) * 100;
     $(this.element).find(".combat-timer-bar").css("width", `${percent}%`);
+  }
+
+  checkCritical(){
+    const percent = (this.currentTime / this.time) * 100;
     if (percent <= game.settings.get("hurry-up", "critical")) {
       if(!this.isCritical){
         this.isCritical = true;
