@@ -1,8 +1,9 @@
 class CombatTimer extends Application {
-  constructor(time) {
+  constructor(time,selfDestruct = false) {
     super();
     this.time = time;
     this.started = false;
+    this.selfDestruct = selfDestruct;
   }
 
   static get defaultOptions() {
@@ -53,6 +54,7 @@ class CombatTimer extends Application {
     }
     const soundP = game.settings.get("hurry-up", "endSoundPath")
     if(soundP) AudioHelper.play({src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false}, false);
+    if(this.selfDestruct) this.close();
   }
 
   async onCritical(){
@@ -138,5 +140,11 @@ class CombatTimer extends Application {
   static Start(time = game.settings.get("hurry-up", "timerDuration")) {
     if(!game.combatTimer) game.combatTimer = new CombatTimer(time)
     game.combatTimer.render(true).startTimer();
+  }
+  static socketTimer(time){
+    new CombatTimer(time,true).render(true).startTimer();
+  }
+  static Create(time){
+    HurryUpSocket.executeForEveryone("StartTimer",time)
   }
 }

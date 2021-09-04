@@ -38,7 +38,7 @@
   "socket":true,
   "dependencies": [
     {
-        "name": "lib-wrapper"
+        "name": "socketlib"
     }
   ]
 }
