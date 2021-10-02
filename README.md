@@ -13,4 +13,8 @@ Tired of those pesky players taking forever to then just swing a longsword after
 - **Sounds**: Play a looping sound when the timer goes critical (defaults to ticking) and a sound when the time is over
 - **Go Next**: Automatically advance the turn tracker when a timer ends
 
+## Custom Timer
+
+You can create a timer out of combat with this simple script macro `CombatTimer.Create(seconds)` with the desired ammount of seconds
+
 The sounds included are from GameAudioGDC https://sonniss.com/gameaudiogdc
