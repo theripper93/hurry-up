@@ -28,6 +28,10 @@
             "soundVol":{
                 "name": "Sound Volume",
                 "hint": "Volume of the sounds played"
+            },
+            "disable" : {
+                "name": "Disable Timer",
+                "hint": "Disable the combat timer"
             }
         }
     }

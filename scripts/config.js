@@ -1,6 +1,16 @@
 Hooks.once("init", async function () {});
 
 Hooks.once("init", async function () {
+
+  game.settings.register("hurry-up", "disable", {
+    name: game.i18n.localize("hp.settings.disable.name"),
+    hint: game.i18n.localize("hp.settings.disable.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("hurry-up", "timerDuration", {
     name: game.i18n.localize("hp.settings.timerDuration.name"),
     hint: game.i18n.localize("hp.settings.timerDuration.hint"),
