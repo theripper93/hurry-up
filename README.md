@@ -1,4 +1,5 @@
 # Hurry Up! Combat Timer
+## Before opening an issue read [THIS](https://github.com/theripper93/Levels/blob/v9/ISSUES.md)
 A simple timer to hurry up your players in combat!
 Tired of those pesky players taking forever to then just swing a longsword after a 10 minute wait? Well, i have the solution for you!
 
