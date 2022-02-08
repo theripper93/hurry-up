@@ -32,7 +32,11 @@
             "disable" : {
                 "name": "Disable Timer",
                 "hint": "Disable the combat timer"
-            }
+            },
+			"runForNpc": {
+				"name": "Run for NPC",
+				"hint": "Runt the timer on NPCs turn"
+			}
         }
     }
 }

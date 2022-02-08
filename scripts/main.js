@@ -15,7 +15,7 @@ Hooks.on("updateCombat", (combat, updates) => {
   if ("turn" in updates && !game.settings.get("hurry-up", "disable")) {
     const token = canvas.tokens.get(game?.combat?.current?.tokenId);
     const actor = token?.actor;
-    if (actor?.hasPlayerOwner) {
+    if (game.settings.get("hurry-up", "runForNPC") || actor?.hasPlayerOwner) {
       CombatTimer.Start();
     } else {
       game.combatTimer?.close(true);
