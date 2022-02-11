@@ -100,4 +100,14 @@ Hooks.once("init", async function () {
     default: 0.8,
   });
 
+  game.settings.register("hurry-up", "runForNPC", {
+    name: game.i18n.localize("hp.settings.runForNpc.name"),
+    hint: game.i18n.localize("hp.settings.runForNpc.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+
 });
