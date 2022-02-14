@@ -108,6 +108,15 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: false,
   });
+  
+  game.settings.register("hurry-up", "showOnlyAtCritical", {
+    name: game.i18n.localize("hp.settings.showOnlyAtCritical.name"),
+    hint: game.i18n.localize("hp.settings.showOnlyAtCritical.hint"),
+    scope: "word",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
 
 
 });

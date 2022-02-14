@@ -36,6 +36,10 @@
 			"runForNpc": {
 				"name": "Run for NPC",
 				"hint": "Runt the timer on NPCs turn"
+			},
+			"showOnlyAtCritical": {
+				"name": "Show only at critical",
+				"hint": "Timer is hidden until the critical time is hit"
 			}
         }
     }

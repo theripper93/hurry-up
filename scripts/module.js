@@ -22,6 +22,11 @@ class CombatTimer extends Application {
   async startTimer() {
     this.reset();
     await this.sleep(1000)
+	const showOnlyAtCritical = game.settings.get("hurry-up", "showOnlyAtCritical");
+	if(showOnlyAtCritical)
+	{
+		$("#combat-timer").hide(1000);
+	}
     this.currentTime = this.time;
     this.started = true;
     while (this.started && this.currentTime > 0) {
@@ -58,6 +63,12 @@ class CombatTimer extends Application {
   }
 
   async onCritical(){
+	const showOnlyAtCritical = game.settings.get("hurry-up", "showOnlyAtCritical");
+	if(showOnlyAtCritical)
+	{
+		$("#combat-timer").show();
+	}
+	
     this.critSound?.stop();
     const soundP = game.settings.get("hurry-up", "critSoundPath")
     if(soundP) this.critSound = await AudioHelper.play({src: soundP, autoplay:true , volume: game.settings.get("hurry-up", "soundVol"), loop: true}, false);
