@@ -86,17 +86,32 @@ class CombatTimer extends Application {
   }
 
   checkCritical(){
-    const percent = (this.currentTime / this.time) * 100;
-    if (percent <= game.settings.get("hurry-up", "critical")) {
+   let isCurrentCritical = false;
+   const secondsInsteadOfPercentage = game.settings.get("hurry-up", "secondsInsteadOfPercentage");
+   if(secondsInsteadOfPercentage)
+   {
+      if(this.currentTime <= game.settings.get("hurry-up", "critical"))
+      {
+         isCurrentCritical = true;
+      }
+   }else{
+      const percent = (this.currentTime / this.time) * 100;
+      if (percent <= game.settings.get("hurry-up", "critical")) {
+        isCurrentCritical = true;
+      }
+   }
+   
+   if(isCurrentCritical)
+   {
       if(!this.isCritical){
-        this.isCritical = true;
-        this.onCritical();
+         this.isCritical = true;
+         this.onCritical();
       }
       $(this.element)
         .find(".combat-timer-bar")
         .css("background-color", "rgba(255, 0, 0, 0.26)");
       $(this.element).find(".combat-timer-timer-text").addClass("blinking");
-    }
+   }
   }
 
   activateListeners(html) {
