@@ -4,6 +4,7 @@ class CombatTimer extends Application {
     this.time = time;
     this.started = false;
     this.selfDestruct = selfDestruct;
+    this.sleepTimeout = undefined;
   }
 
   static get defaultOptions() {
@@ -20,8 +21,8 @@ class CombatTimer extends Application {
   }
 
   async startTimer() {
+    
     this.reset();
-    await this.sleep(1000)
     this.currentTime = this.time;
     this.started = true;
     while (this.started && this.currentTime > 0) {
@@ -36,6 +37,7 @@ class CombatTimer extends Application {
   }
 
   reset(){
+    clearTimeout(this.sleepTimeout);
     this.started = false;
     this.isCritical = false;
     $(this.element)
@@ -68,7 +70,7 @@ class CombatTimer extends Application {
   }
 
   async sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => this.sleepTimeout = setTimeout(resolve, ms));
   }
 
   updateTime() {
