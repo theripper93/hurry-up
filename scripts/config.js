@@ -57,6 +57,14 @@ Hooks.once("init", async function () {
     default: 10,
   });
 
+  game.settings.register("hurry-up", "secondsInsteadOfPercentage", {
+    name: game.i18n.localize("hp.settings.secondsInsteadOfPercentage.name"),
+    hint: game.i18n.localize("hp.settings.secondsInsteadOfPercentage.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
   game.settings.register("hurry-up", "goNext", {
     name: game.i18n.localize("hp.settings.goNext.name"),
     hint: game.i18n.localize("hp.settings.goNext.hint"),
