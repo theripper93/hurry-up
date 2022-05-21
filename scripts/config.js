@@ -108,6 +108,14 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: false,
   });
-
+  
+  game.settings.register("hurry-up", "showOnUpdateCombatOnly", {
+    name: game.i18n.localize("hp.settings.showOnUpdateCombatOnly.name"),
+    hint: game.i18n.localize("hp.settings.showOnUpdateCombatOnly.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
 
 });

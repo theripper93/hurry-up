@@ -1,5 +1,5 @@
 Hooks.on("canvasReady", () => {
-  if (!game.combat?.started) return;
+  if (!game.combat?.started || game.settings.get("hurry-up", "showOnUpdateCombatOnly")) return;
   const token = canvas.tokens.get(game?.combat?.current?.tokenId);
   const actor = token?.actor;
   if (actor?.hasPlayerOwner && !game.settings.get("hurry-up", "disable")) {
@@ -12,7 +12,7 @@ Hooks.on("updateCombat", (combat, updates) => {
     game.combatTimer?.close(true);
     return;
   }
-  if ("turn" in updates && !game.settings.get("hurry-up", "disable")) {
+  if (("turn" in updates || "round" in updates) && !game.settings.get("hurry-up", "disable")) {
     const token = canvas.tokens.get(game?.combat?.current?.tokenId);
     const actor = token?.actor;
     if (game.settings.get("hurry-up", "runForNPC") || actor?.hasPlayerOwner) {
