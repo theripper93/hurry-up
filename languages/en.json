@@ -36,6 +36,10 @@
 			"runForNpc": {
 				"name": "Run for NPC",
 				"hint": "Runt the timer on NPCs turn"
+			},
+			"secondsInsteadOfPercentage": {
+				"name": "Critical time use seconds instead of percentage",
+				"hint": "By default the critical threshold uses percentage of total time. By checking this setting it's changed to seconds instead."
 			}
         }
     }
