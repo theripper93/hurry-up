@@ -40,8 +40,7 @@
             "showOnUpdateCombatOnly": {
                 "name": "First Show Timer on Next Turn",
 				"hint": "First show the combat timer when 'Begin Combat', 'Next Turn' or 'End Turn' is pressed"
-            }
-
+            },
 			"secondsInsteadOfPercentage": {
 				"name": "Critical time use seconds instead of percentage",
 				"hint": "By default the critical threshold uses percentage of total time. By checking this setting it's changed to seconds instead."
