@@ -44,7 +44,7 @@ class CombatTimer extends Application {
   reset() {
     clearInterval(this.sleepTimer);
     this.started = false;
-    this.isCritical = false;
+    this.onCriticalEnd();
     this.timeElapsed = 0;
     switch (game.settings.get("hurry-up", "style")) {
       case "digits":
@@ -61,14 +61,14 @@ class CombatTimer extends Application {
 
   async onEnd() {
     this.reset();
-    this.onCriticalEnd();
     if (this.timeRemaining > 0) return;
-    if (game.settings.get("hurry-up", "goNext") && game.user.isGM){
+    if (game.settings.get("hurry-up", "goNext") && game.user.isGM) {
       game.combat?.nextTurn()
     }
     const soundP = game.settings.get("hurry-up", "endSoundPath")
     if (soundP) AudioHelper.play(
-        {src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false}, false
+        {src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false},
+        false
       );
     if (this.selfDestruct) this.close();
   }
@@ -80,8 +80,10 @@ class CombatTimer extends Application {
   updatePaused(paused, timePaused) {
     this.timePaused = timePaused;
     if (paused) {
+      this.critSound?.pause();
       this.timeElapsed = this.timePaused - this.timeStarted;
     } else {
+      if (this.isCritical) this.onCritical();
       this.timeStarted = this.timePaused - this.timeElapsed;
     }
   }
@@ -100,7 +102,6 @@ class CombatTimer extends Application {
           break; 
       }
       if (!this.started || this.timeRemaining <= 0) {
-        clearInterval(this.sleepTimer);
         this.onEnd();
         return;
       }
@@ -185,11 +186,13 @@ class CombatTimer extends Application {
     this.critSound?.stop();
     const soundP = game.settings.get("hurry-up", "critSoundPath")
     if (soundP) this.critSound = await AudioHelper.play(
-        {src: soundP, autoplay:true , volume: game.settings.get("hurry-up", "soundVol"), loop: true}, false
-      );
+        {src: soundP, autoplay:true , volume: game.settings.get("hurry-up", "soundVol"), loop: true},
+        false
+      )
   }
 
   async onCriticalEnd() {
+    this.isCritical = false;
     this.critSound?.stop();
   }
 
@@ -250,22 +253,13 @@ class CombatTimer extends Application {
     if (!game.combatTimer) {
       game.combatTimer = new CombatTimer({template: CombatTimer.setTemplate()}, time)
     } else {
-      game.combatTimer._render(true, {template: CombatTimer.setTemplate()}) 
+      game.combatTimer._render(true, {template: CombatTimer.setTemplate()}).startTimer
     }
     game.combatTimer.render(true).startTimer();
   }
 
   static socketTimer(time){
-    let optionTemplate;
-    switch(game.settings.get("hurry-up", "style")) {
-      case "digits":
-        optionTemplate = `modules/hurry-up/templates/hurry-up-digits.hbs`
-        break;
-      case "circle":
-        optionTemplate = `modules/hurry-up/templates/hurry-up-circle.hbs`
-        break;
-    }
-    new CombatTimer({template: optionTemplate}, time, true).render(true).startTimer();
+    new CombatTimer({template: CombatTimer.setTemplate()}, time, true).render(true).startTimer();
   }
 
   static Create(time){
