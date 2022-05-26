@@ -50,7 +50,7 @@ class CombatTimer extends Application {
       case "digits":
         $(this.element)
           .find(".hurry-up-bar")
-          .css("background-color", this.baseColor);
+          .css("background-color", this.barColor);
         $(this.element).find(".hurry-up-timer-text").removeClass("blinking");
         break;
       case "circle":
@@ -60,8 +60,8 @@ class CombatTimer extends Application {
   }
 
   async onEnd() {
-    this.reset();
     if (this.timeRemaining > 0) return;
+    this.reset();
     if (game.settings.get("hurry-up", "goNext") && game.user.isGM) {
       game.combat?.nextTurn()
     }
@@ -101,11 +101,11 @@ class CombatTimer extends Application {
             this.updateCircle();
           break; 
       }
+      this.checkCritical();
       if (!this.started || this.timeRemaining <= 0) {
         this.onEnd();
         return;
       }
-      this.checkCritical();
     }
   }
 
