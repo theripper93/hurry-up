@@ -1,18 +1,27 @@
 class CombatTimer extends Application {
-  constructor(time,selfDestruct = false) {
-    super();
+
+  constructor(options, time, selfDestruct = false) {
+    super(options);
     this.time = time;
     this.started = false;
     this.selfDestruct = selfDestruct;
-    this.sleepTimeout = undefined;
+    this.sleepTimer = undefined;
+    this.timeNow = Date.now();
+    this.timeStarted = this.timeNow;
+    this.timePaused = this.timeNow;
+    this.timeElapsed = 0;
+    this.timeRemaining = 0;
+    this.baseColor = getComputedStyle(document.documentElement).getPropertyValue("--hurry-up-base-color"); 
+    this.criticalColor = "rgba(255, 0, 0, 0.5)";
+    this.barColor = getComputedStyle(document.documentElement).getPropertyValue("--hurry-up-bar-color");
+    this.barCriticalColor = "rgba(255, 0, 0, 0.2)"; 
   }
 
   static get defaultOptions() {
     return {
       ...super.defaultOptions,
-      title: "Combat Timer",
-      id: "combat-timer",
-      template: `modules/hurry-up/templates/hurry-up.hbs`,
+      title: "CT",
+      id: "hurry-up",
       resizable: false,
       draggable: true,
       "min-width": 0,
@@ -21,111 +30,176 @@ class CombatTimer extends Application {
   }
 
   async startTimer() {
-    
     this.reset();
-    this.currentTime = this.time;
     this.started = true;
-    while (this.started && this.currentTime > 0) {
-      await this.sleep(1000);
-      if (!game?.paused) {
-        this.currentTime--;
-        this.updateTime();
-        this.checkCritical();
-      }
+    this.timeRemaining = this.time * 1000;
+    if (game?.paused) {
+      this.timeStarted = this.timePaused;
+    } else {
+      this.timeStarted = Date.now();
     }
-    this.onEnd();
+    this.sleepTimer = setInterval(this.updateTime.bind(this), 100)
   }
 
-  reset(){
-    clearTimeout(this.sleepTimeout);
+  reset() {
+    clearInterval(this.sleepTimer);
     this.started = false;
     this.isCritical = false;
-    $(this.element)
-    .find(".combat-timer-bar")
-    .css("background-color", "rgba(255, 255, 255, 0.089)");
-    $(this.element).find(".combat-timer-timer-text").removeClass("blinking");
+    this.timeElapsed = 0;
+    switch (game.settings.get("hurry-up", "style")) {
+      case "digits":
+        $(this.element)
+          .find(".hurry-up-bar")
+          .css("background-color", this.baseColor);
+        $(this.element).find(".hurry-up-timer-text").removeClass("blinking");
+        break;
+      case "circle":
+        $(this.element).find("#hurry-up-canvas").removeClass("blinking");
+        break;
+    }
   }
 
-  async onEnd(){
-    this.isCritical = false;
-    this.started = false;
+  async onEnd() {
+    this.reset();
     this.onCriticalEnd();
-    if(this.currentTime) return;
-    if(game.settings.get("hurry-up", "goNext") && game.user.isGM){
+    if (this.timeRemaining > 0) return;
+    if (game.settings.get("hurry-up", "goNext") && game.user.isGM){
       game.combat?.nextTurn()
     }
     const soundP = game.settings.get("hurry-up", "endSoundPath")
-    if(soundP) AudioHelper.play({src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false}, false);
-    if(this.selfDestruct) this.close();
-  }
-
-  async onCritical(){
-    this.critSound?.stop();
-    const soundP = game.settings.get("hurry-up", "critSoundPath")
-    if(soundP) this.critSound = await AudioHelper.play({src: soundP, autoplay:true , volume: game.settings.get("hurry-up", "soundVol"), loop: true}, false);
-  }
-
-  async onCriticalEnd(){
-    this.critSound?.stop();
+    if (soundP) AudioHelper.play(
+        {src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false}, false
+      );
+    if (this.selfDestruct) this.close();
   }
 
   async sleep(ms) {
-    return new Promise((resolve) => this.sleepTimeout = setTimeout(resolve, ms));
+    return new Promise((resolve) => this.sleepTimer = setTimeout(resolve, ms));
+  }
+  
+  updatePaused(paused, timePaused) {
+    this.timePaused = timePaused;
+    if (paused) {
+      this.timeElapsed = this.timePaused - this.timeStarted;
+    } else {
+      this.timeStarted = this.timePaused - this.timeElapsed;
+    }
   }
 
   updateTime() {
-    const minutes = Math.floor(this.currentTime / 60);
-    const seconds = this.currentTime % 60;
-    $(this.element)
-      .find(".combat-timer-timer-text")
-      .text(
-        `${minutes < 10 ? "0" + minutes : minutes}:${
-          seconds < 10 ? "0" + seconds : seconds
-        }`
-      );
-    const percent = (this.currentTime / this.time) * 100;
-    $(this.element).find(".combat-timer-bar").css("width", `${percent}%`);
+    if (!game?.paused) {
+      this.timeNow = Date.now();
+      this.timeElapsed = this.timeNow - this.timeStarted;
+      this.timeRemaining = this.time - Math.floor(this.timeElapsed / 1000);
+      switch (game.settings.get("hurry-up", "style")) {
+        case "digits":
+            this.updateDigits();
+          break;
+        case "circle":
+            this.updateCircle();
+          break; 
+      }
+      if (!this.started || this.timeRemaining <= 0) {
+        clearInterval(this.sleepTimer);
+        this.onEnd();
+        return;
+      }
+      this.checkCritical();
+    }
   }
 
-  checkCritical(){
-   let isCurrentCritical = false;
-   const secondsInsteadOfPercentage = game.settings.get("hurry-up", "secondsInsteadOfPercentage");
-   if(secondsInsteadOfPercentage)
-   {
-      if(this.currentTime <= game.settings.get("hurry-up", "critical"))
-      {
-         isCurrentCritical = true;
+  updateDigits() {
+    const minutes = Math.floor(this.timeRemaining / 60);
+    const seconds = Math.floor(this.timeRemaining % 60);
+    $(this.element)
+      .find(".hurry-up-timer-text")
+      .text(`${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`);
+    const percent = (this.timeRemaining / this.time) * 100;
+    $(this.element).find(".hurry-up-bar").css("width", `${percent}%`);
+  }
+
+  updateCircle() {
+    let timePercentage = this.timeElapsed / (this.time * 1000);
+    let circleAngle = (timePercentage > 1) ? 360 : timePercentage * 360;
+    let canvasSize = game.settings.get("hurry-up", "size") * 15;
+    let halfCanvasSize = canvasSize / 2;
+    let radius = halfCanvasSize - 5;
+    let canvas = document.getElementById("hurry-up-canvas");
+    canvas.setAttribute("height", canvasSize);
+    canvas.setAttribute("width", canvasSize);
+    let context = canvas.getContext("2d");
+    let sAngle = ((circleAngle / 360 * 2) - 0.5) * Math.PI;
+    let eAngle = 1.5 * Math.PI;
+    context.clearRect(0, 0, canvasSize, canvasSize);
+    context.beginPath();
+    context.fillStyle = (this.isCritical) ? this.criticalColor : this.baseColor;
+    context.moveTo(halfCanvasSize, halfCanvasSize);
+    context.arc(halfCanvasSize, halfCanvasSize, radius, sAngle, eAngle);
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+    context.shadowColor = "rgba(0, 0, 0, 0.75)";
+    context.shadowBlur = 2;
+    context.fill();
+    context.closePath();
+  };
+
+  updateWindowless() {
+      const windowAppElement = document.getElementById("hurry-up");
+      const windowHeaderElement = windowAppElement.getElementsByClassName("window-header");
+      if (game.settings.get("hurry-up", "windowless")) {
+        windowAppElement.classList.add("windowless");
+        windowHeaderElement[0].classList.add("windowless");
+      } else {
+        windowAppElement.classList.remove("windowless");
+        windowHeaderElement[0].classList.remove("windowless");
       }
-   }else{
-      const percent = (this.currentTime / this.time) * 100;
-      if (percent <= game.settings.get("hurry-up", "critical")) {
-        isCurrentCritical = true;
+  }
+
+  checkCritical() { 
+    if (!this.isCritical) {
+      if (game.settings.get("hurry-up", "secondsInsteadOfPercentage")) {
+        if (this.thisRemaining <= game.settings.get("hurry-up", "critical")) {
+          this.isCritical = true;
+        }
+      } else {
+        const percent = (this.timeRemaining / this.time) * 100;
+        if (percent <= game.settings.get("hurry-up", "critical")) {
+          this.isCritical = true;
+        }
       }
-   }
-   
-   if(isCurrentCritical)
-   {
-      if(!this.isCritical){
-         this.isCritical = true;
-         this.onCritical();
+      if (this.isCritical) {
+        this.onCritical();
+        switch (game.settings.get("hurry-up", "style")) {
+          case "digits":
+            $(this.element).find(".hurry-up-bar").css("background-color", this.barCriticalColor);
+            $(this.element).find(".hurry-up-timer-text").addClass("blinking");
+            break;
+          case "circle":
+            $(this.element).find("#hurry-up-canvas").addClass("blinking");
+        }
       }
-      $(this.element)
-        .find(".combat-timer-bar")
-        .css("background-color", "rgba(255, 0, 0, 0.26)");
-      $(this.element).find(".combat-timer-timer-text").addClass("blinking");
-   }
+    }
+  }
+
+  async onCritical() {
+    this.critSound?.stop();
+    const soundP = game.settings.get("hurry-up", "critSoundPath")
+    if (soundP) this.critSound = await AudioHelper.play(
+        {src: soundP, autoplay:true , volume: game.settings.get("hurry-up", "soundVol"), loop: true}, false
+      );
+  }
+
+  async onCriticalEnd() {
+    this.critSound?.stop();
   }
 
   activateListeners(html) {
     super.activateListeners(html);
     document.documentElement.style.setProperty(
-      "--hurry-up-font-size",
-      game.settings.get("hurry-up", "size") + "em"
+      "--hurry-up-font-size", game.settings.get("hurry-up", "size") + "em"
     );
-    this.currentTime = this.time;
-    this.updateTime();
     html.find(".header-button").remove();
-    if(!this.positioned){
+    if (!this.positioned){
       this.positioned = true;
       const top = 2
       const left = window.innerWidth - this.element.width() - 310;
@@ -133,6 +207,7 @@ class CombatTimer extends Application {
       this.position.top = top;
       this.position.left = left;
     }
+    this.updateWindowless();
   }
 
   getData() {
@@ -154,14 +229,46 @@ class CombatTimer extends Application {
     super.close();
   }
 
-  static Start(time = game.settings.get("hurry-up", "timerDuration")) {
-    if(!game.combatTimer) game.combatTimer = new CombatTimer(time)
+  static setTemplate() {
+    let template;
+    switch(game.settings.get("hurry-up", "style")) {
+      case "digits":
+       template = `modules/hurry-up/templates/hurry-up-digits.hbs`
+        break;
+      case "circle":
+        template = `modules/hurry-up/templates/hurry-up-circle.hbs`
+        break;
+    }
+    return template;
+  }
+
+  renderTemplate() {
+   game.combatTimer._render(true, {template: CombatTimer.setTemplate()}) 
+  }
+
+  static start(time = game.settings.get("hurry-up", "timerDuration")) {
+    if (!game.combatTimer) {
+      game.combatTimer = new CombatTimer({template: CombatTimer.setTemplate()}, time)
+    } else {
+      game.combatTimer._render(true, {template: CombatTimer.setTemplate()}) 
+    }
     game.combatTimer.render(true).startTimer();
   }
+
   static socketTimer(time){
-    new CombatTimer(time,true).render(true).startTimer();
+    let optionTemplate;
+    switch(game.settings.get("hurry-up", "style")) {
+      case "digits":
+        optionTemplate = `modules/hurry-up/templates/hurry-up-digits.hbs`
+        break;
+      case "circle":
+        optionTemplate = `modules/hurry-up/templates/hurry-up-circle.hbs`
+        break;
+    }
+    new CombatTimer({template: optionTemplate}, time, true).render(true).startTimer();
   }
+
   static Create(time){
-    HurryUpSocket.executeForEveryone("StartTimer",time)
+    HurryUpSocket.executeForEveryone("StartTimer", time)
   }
 }

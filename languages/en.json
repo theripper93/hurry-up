@@ -1,21 +1,45 @@
 {
     "hp":{
         "settings":{
+            "disable" : {
+                "name": "Disable Timer",
+                "hint": "Disable the combat timer"
+            },
             "timerDuration":{
                 "name": "Timer Duration",
                 "hint": "Duration in seconds of the timer"
+            },
+            "style":{
+                "name": "Style",
+                "hint": "Style of the timer"
             },
             "size":{
                 "name": "Size",
                 "hint": "Size of the timer"
             },
+            "windowless":{
+                "name": "Windowless",
+                "hint": "Display the timer without a window"
+            },
             "critical":{
                 "name": "Critical Threshold",
                 "hint": "Threshold after which the timer will go critical and start blinking"
             },
+            "secondsInsteadOfPercentage": {
+				"name": "Critical time use seconds instead of percentage",
+				"hint": "By default the critical threshold uses percentage of total time. By checking this setting it's changed to seconds instead."
+			},
             "goNext": {
                 "name": "Go Next",
                 "hint": "Go to next combatant when timer ends"
+            },
+			"runForNpc": {
+				"name": "Run for NPC",
+				"hint": "Run the timer on NPCs turn"
+			},
+            "showOnUpdateCombatOnly": {
+                "name": "First Show Timer on Next Turn",
+				"hint": "First show the combat timer when 'Begin Combat', 'Next Turn' or 'End Turn' is pressed"
             },
             "critSoundPath":{
                 "name": "Critical Sound",
@@ -28,23 +52,7 @@
             "soundVol":{
                 "name": "Sound Volume",
                 "hint": "Volume of the sounds played"
-            },
-            "disable" : {
-                "name": "Disable Timer",
-                "hint": "Disable the combat timer"
-            },
-			"runForNpc": {
-				"name": "Run for NPC",
-				"hint": "Run the timer on NPCs turn"
-			},
-            "showOnUpdateCombatOnly": {
-                "name": "First Show Timer on Next Turn",
-				"hint": "First show the combat timer when 'Begin Combat', 'Next Turn' or 'End Turn' is pressed"
-            },
-			"secondsInsteadOfPercentage": {
-				"name": "Critical time use seconds instead of percentage",
-				"hint": "By default the critical threshold uses percentage of total time. By checking this setting it's changed to seconds instead."
-			}
+            }
         }
     }
 }

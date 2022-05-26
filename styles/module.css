@@ -1,36 +1,36 @@
 :root {
   --hurry-up-font-size: 6em;
+  --hurry-up-bar-color: rgba(255, 255, 240, 0.2);
+  --hurry-up-base-color: rgba(255, 255, 240, 0.8);
 }
 
-#combat-timer .window-content {
-  background: rgba(0, 0, 0, 0.219);
+#hurry-up .window-content {
+  background: transparent;
   padding: 0;
   margin: 0;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 0 0 5px 5px;
 }
 
-#combat-timer .window-header {
+#hurry-up .window-header {
   padding: unset;
   line-height: unset;
   border-bottom: unset;
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-  color: transparent;
-  border-radius: 5px;
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
+  border-radius: 5px 5px 0 0;
+  flex: unset;
   height: 10px;
+  width: 100%;
   z-index: 100;
   background: url(/ui/denim-dark-090.png) repeat;
   background-blend-mode: screen;
   background-color: rgba(0, 0, 0, 1);
+  color: transparent;
 }
 
-#combat-timer .combat-timer-timer-text {
+#hurry-up .hurry-up-timer-text {
   font-size: var(--hurry-up-font-size);
-  color: rgba(255, 255, 255, 0.63);
+  color: var(--hurry-up-base-color);
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, .75));
   text-align: center;
   margin-left: 10px;
   margin-right: 10px;
@@ -40,15 +40,15 @@
   z-index: 20;
 }
 
-#combat-timer .combat-timer-timer {
+#hurry-up .hurry-up-timer {
   display: flex;
 }
 
-#combat-timer .main-window {
+#hurry-up .main-window {
   display: flex;
 }
 
-#combat-timer .combat-timer-bar {
+#hurry-up .hurry-up-bar {
   left: 0;
   position: absolute;
   top: 0;
@@ -56,16 +56,35 @@
   border-radius: 5px;
   z-index: 10;
   height: 100%;
-  background: rgba(255, 255, 255, 0.089);
+  background: var(--hurry-up-bar-color);
   transition: width 0.5s ease-in-out;
 }
 
-#combat-timer .blinking {
+#hurry-up .blinking {
   animation: blinking-text 1s ease infinite;
 }
 
 @keyframes blinking-text {
   50% {
-    opacity: 0;
+    opacity: 0%;
   }
 }
+
+#hurry-up.window-app.windowless {
+  background: unset;
+  box-shadow: unset;
+}
+
+#hurry-up .window-header.windowless {
+  height: 0;
+}
+
+#hurry-up.window-app.windowless:hover {
+  background: url(/ui/denim075.png) repeat;
+  box-shadow: 0 0 20px var(--color-shadow-dark);
+}
+
+#hurry-up.window-app.windowless:hover > .window-header.windowless{
+  height: 10px;
+}
+
