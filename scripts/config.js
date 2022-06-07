@@ -31,7 +31,8 @@ Hooks.once("init", async function () {
     type: String,
     choices: {
         "digits": "Digits",
-        "circle": "Circle"
+        "circle": "Circle",
+        "sand": "Sand"
     },
     default: "digits",
     onChange: () => {

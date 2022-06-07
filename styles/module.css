@@ -2,6 +2,7 @@
   --hurry-up-font-size: 6em;
   --hurry-up-bar-color: rgba(255, 255, 240, 0.2);
   --hurry-up-base-color: rgba(255, 255, 240, 0.8);
+  --hurry-up-glass-color: rgba(255, 255, 240, 0.3);
 }
 
 #hurry-up .window-content {
