@@ -3,7 +3,7 @@ Hooks.on("canvasReady", () => {
   const token = canvas.tokens.get(game?.combat?.current?.tokenId);
   const actor = token?.actor;
   if (actor?.hasPlayerOwner && !game.settings.get("hurry-up", "disable")) {
-    CombatTimer.Start();
+    CombatTimer.start();
   }
 });
 
@@ -16,7 +16,7 @@ Hooks.on("updateCombat", (combat, updates) => {
     const token = canvas.tokens.get(game?.combat?.current?.tokenId);
     const actor = token?.actor;
     if (game.settings.get("hurry-up", "runForNPC") || actor?.hasPlayerOwner) {
-      CombatTimer.Start();
+      CombatTimer.start();
     } else {
       game.combatTimer?.close(true);
     }
@@ -25,6 +25,13 @@ Hooks.on("updateCombat", (combat, updates) => {
 
 Hooks.on("deleteCombat", (combat, updates) => {
     game.combatTimer?.close(true);
+});
+
+Hooks.on("pauseGame", (paused) => {
+    const timePaused = Date.now();
+    if (game.combatTimer) {
+      game.combatTimer?.updatePaused(paused, timePaused);
+    }
 });
 
 let HurryUpSocket;

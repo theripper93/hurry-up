@@ -23,10 +23,27 @@ Hooks.once("init", async function () {
     }
   });
 
+  game.settings.register("hurry-up", "style", {
+    name: game.i18n.localize("hp.settings.style.name"),
+    hint: game.i18n.localize("hp.settings.style.hint"),
+    scope: "client",
+    config: true,
+    type: String,
+    choices: {
+        "digits": "Digits",
+        "circle": "Circle",
+        "sand": "Sand"
+    },
+    default: "digits",
+    onChange: () => {
+      if(game.combatTimer) game.combatTimer.renderTemplate();
+    }
+  });
+
   game.settings.register("hurry-up", "size", {
     name: game.i18n.localize("hp.settings.size.name"),
     hint: game.i18n.localize("hp.settings.size.hint"),
-    scope: "world",
+    scope: "client",
     config: true,
     type: Number,
     range: {
@@ -40,6 +57,18 @@ Hooks.once("init", async function () {
         "--hurry-up-font-size",
         sett + "em"
       );
+    }
+  });
+
+  game.settings.register("hurry-up", "windowless", {
+    name: game.i18n.localize("hp.settings.windowless.name"),
+    hint: game.i18n.localize("hp.settings.windowless.hint"),
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: () => {
+      if(game.combatTimer) game.combatTimer.updateWindowless();
     }
   });
 
@@ -65,9 +94,28 @@ Hooks.once("init", async function () {
     type: Boolean,
     default: false,
   });
+
   game.settings.register("hurry-up", "goNext", {
     name: game.i18n.localize("hp.settings.goNext.name"),
     hint: game.i18n.localize("hp.settings.goNext.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register("hurry-up", "runForNPC", {
+    name: game.i18n.localize("hp.settings.runForNpc.name"),
+    hint: game.i18n.localize("hp.settings.runForNpc.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+  
+  game.settings.register("hurry-up", "showOnUpdateCombatOnly", {
+    name: game.i18n.localize("hp.settings.showOnUpdateCombatOnly.name"),
+    hint: game.i18n.localize("hp.settings.showOnUpdateCombatOnly.hint"),
     scope: "world",
     config: true,
     type: Boolean,
@@ -107,23 +155,4 @@ Hooks.once("init", async function () {
     },
     default: 0.8,
   });
-
-  game.settings.register("hurry-up", "runForNPC", {
-    name: game.i18n.localize("hp.settings.runForNpc.name"),
-    hint: game.i18n.localize("hp.settings.runForNpc.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-  
-  game.settings.register("hurry-up", "showOnUpdateCombatOnly", {
-    name: game.i18n.localize("hp.settings.showOnUpdateCombatOnly.name"),
-    hint: game.i18n.localize("hp.settings.showOnUpdateCombatOnly.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-  });
-
 });
