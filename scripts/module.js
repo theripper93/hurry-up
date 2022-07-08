@@ -34,7 +34,7 @@ class CombatTimer extends Application {
   async startTimer() {
     this.reset();
     this.started = true;
-    this.timeRemaining = this.time * 1000;
+    this.timeRemaining = this.time;
     if (game?.paused) {
       this.timeStarted = this.timePaused;
     } else {
@@ -380,6 +380,7 @@ class CombatTimer extends Application {
   }
 
   close() {
+    clearInterval(this.sleepTimer);
     this.started = false;
     this.critSound?.stop();
     super.close();
@@ -389,7 +390,7 @@ class CombatTimer extends Application {
     let template;
     switch(game.settings.get("hurry-up", "style")) {
       case "digits":
-       template = `modules/hurry-up/templates/hurry-up-digits.hbs`
+        template = `modules/hurry-up/templates/hurry-up-digits.hbs`
         break;
       case "circle":
       case "sand":
