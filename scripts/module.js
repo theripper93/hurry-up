@@ -301,7 +301,7 @@ class CombatTimer extends Application {
   checkCritical() { 
     if (!this.isCritical) {
       if (game.settings.get("hurry-up", "secondsInsteadOfPercentage")) {
-        if (this.thisRemaining <= game.settings.get("hurry-up", "critical")) {
+        if (this.timeRemaining <= game.settings.get("hurry-up", "critical")) {
           this.isCritical = true;
         }
       } else {
