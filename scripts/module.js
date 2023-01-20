@@ -11,6 +11,7 @@ class CombatTimer extends Application {
     this.timePaused = this.timeNow;
     this.timeElapsed = 0;
     this.timeRemaining = 0;
+    this.hasEnded = false;
     this.baseColor = getComputedStyle(document.documentElement).getPropertyValue("--hurry-up-base-color"); 
     this.criticalColor = "rgba(255, 0, 0, 0.75)";
     this.barColor = getComputedStyle(document.documentElement).getPropertyValue("--hurry-up-bar-color");
@@ -48,11 +49,13 @@ class CombatTimer extends Application {
     this.started = false;
     this.onCriticalEnd();
     this.timeElapsed = 0;
+    this.hasEnded = false;
+    const countup = game.settings.get("hurry-up", "countup");
     switch (game.settings.get("hurry-up", "style")) {
       case "digits":
         $(this.element)
           .find(".hurry-up-bar")
-          .css("background-color", this.barColor);
+          .css("background-color", this.barColor, "width", "0%" ? countup : "100%");
         $(this.element).find(".hurry-up-timer-text").removeClass("blinking");
         break;
       case "circle":
@@ -68,22 +71,26 @@ class CombatTimer extends Application {
     if (game.settings.get("hurry-up", "goNext") && game.user.isGM) {
       game.combat?.nextTurn()
     }
-    const soundP = game.settings.get("hurry-up", "endSoundPath")
-    if (soundP) AudioHelper.play(
-        {src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false},
-        false
-      );
+    this.endSound()
     if (this.selfDestruct) this.close();
   }
 
   async sleep(ms) {
     return new Promise((resolve) => this.sleepTimer = setTimeout(resolve, ms));
   }
+
+  async endSound() {
+    const soundP = game.settings.get("hurry-up", "endSoundPath")
+    if (soundP) AudioHelper.play(
+        {src: soundP, autoplay:true, volume: game.settings.get("hurry-up", "soundVol"), loop: false},
+        false
+      );
+  }
   
   updatePaused(paused, timePaused) {
     this.timePaused = timePaused;
     if (paused) {
-      this.critSound?.pause();
+      if (this.critSound?.playing) this.critSound?.pause();
       this.timeElapsed = this.timePaused - this.timeStarted;
     } else {
       if (this.isCritical) this.onCritical();
@@ -107,27 +114,36 @@ class CombatTimer extends Application {
             this.updateSand(); 
       }
       this.checkCritical();
-      if (!this.started || this.timeRemaining <= 0) {
+      const ot = game.settings.get("hurry-up", "overtime");
+      if (!this.started || (this.timeRemaining <= 0 && !ot)) {
         this.onEnd();
         return;
+      }
+      if (this.timeRemaining <= 0 && !this.hasEnded)  {
+        this.endSound();
+        this.hasEnded = true;
       }
     }
   }
 
   updateDigits() {
-    const minutes = Math.floor(this.timeRemaining / 60);
-    const seconds = Math.floor(this.timeRemaining % 60);
+    const countup = game.settings.get("hurry-up", "countup");
+    const minutes = Math.max(Math.floor((countup ? this.timeElapsed/1000 : this.timeRemaining) / 60), 0);
+    const seconds = Math.max(Math.floor((countup ? this.timeElapsed/1000 : this.timeRemaining) % 60), 0);
+
     $(this.element).find(".window-header").css("width", "inherit");
     $(this.element)
       .find(".hurry-up-timer-text")
       .text(`${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`);
-    const percent = (this.timeRemaining / this.time) * 100;
+    let percent = Math.min(Math.max((this.timeRemaining / this.time) * 100, 0), 100);
+    if (countup) percent = 100 - percent;
     $(this.element).find(".hurry-up-bar").css("width", `${percent}%`);
+    // TODO: Fix initial state on countup to not have reset animation on first tick
   }
 
   updateCircle() {
-    const timePercentage = this.timeElapsed / (this.time * 1000);
-    const circleAngle = (timePercentage > 1) ? 360 : timePercentage * 360;
+    const timePercentage = Math.min(Math.max(this.timeElapsed / (this.time * 1000), 0), 1);
+    const circleAngle = timePercentage * 360;
     const canvasSize = game.settings.get("hurry-up", "size") * 15;
     const halfCanvasSize = canvasSize / 2;
     const radius = halfCanvasSize - 5;
@@ -141,9 +157,17 @@ class CombatTimer extends Application {
     const eAngle = 1.5 * Math.PI;
     context.clearRect(0, 0, canvasSize, canvasSize);
     context.beginPath();
-    context.fillStyle = (this.isCritical) ? this.criticalColor : this.baseColor;
+    context.fillStyle = (this.isCritical || this.timeRemaining <=0) ? this.criticalColor : this.baseColor;
     context.moveTo(halfCanvasSize, halfCanvasSize);
-    context.arc(halfCanvasSize, halfCanvasSize, radius, sAngle, eAngle);
+    if (this.timeRemaining > 0) {
+      if (game.settings.get("hurry-up", "countup")) {
+        context.arc(halfCanvasSize, halfCanvasSize, radius, eAngle, sAngle);
+      } else {
+        context.arc(halfCanvasSize, halfCanvasSize, radius, sAngle, eAngle);
+      }
+    } else {
+      if (game.settings.get("hurry-up", "countup")) context.arc(halfCanvasSize, halfCanvasSize, radius, 0, 2*Math.PI);
+    }
     context.shadowOffsetX = 2;
     context.shadowOffsetY = 2;
     context.shadowColor = "rgba(0, 0, 0, 0.75)";
@@ -159,7 +183,7 @@ class CombatTimer extends Application {
     const canvasHalfWidth = canvasWidth / 2;
     const canvasMargin = (canvasHeight * 0.025 > 5) ? 5 : Math.round(canvasHeight * 0.025);
     const glassMargin = canvasMargin * 2;
-    const timePercentage = this.timeElapsed / (this.time * 1000);
+    let timePercentage = Math.min(Math.max(this.timeElapsed / (this.time * 1000), 0), 1);
     const maxIncrement = canvasHeight / 10 * 3;
     const increment = maxIncrement * timePercentage;
     const canvas = document.getElementById("hurry-up-canvas");
@@ -263,7 +287,7 @@ class CombatTimer extends Application {
     context.lineTo(canvasWidth, canvasHeight);
     context.lineTo(0, canvasHeight);
     context.lineTo(0, canvasHeight - glassMargin - increment);
-    context.fillStyle = (this.isCritical) ? this.criticalColor : this.baseColor;
+    context.fillStyle = (this.isCritical || this.timeRemaining < 0) ? this.criticalColor : this.baseColor;
     context.fill();
     context.closePath();
     //Line
@@ -299,6 +323,18 @@ class CombatTimer extends Application {
   }
 
   checkCritical() { 
+    if (this.timeRemaining < 0) {
+      this.onCriticalEnd();
+      switch (game.settings.get("hurry-up", "style")) {
+        case "digits":
+          $(this.element).find(".hurry-up-timer-text").removeClass("blinking");
+          break;
+        case "circle":
+          $(this.element).find("#hurry-up-canvas").removeClass("blinking");
+      }
+      return;
+    }
+
     if (!this.isCritical) {
       if (game.settings.get("hurry-up", "secondsInsteadOfPercentage")) {
         if (this.timeRemaining <= game.settings.get("hurry-up", "critical")) {

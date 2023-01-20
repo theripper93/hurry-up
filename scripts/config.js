@@ -40,6 +40,24 @@ Hooks.once("init", async function () {
     }
   });
 
+  game.settings.register("hurry-up", "countup", {
+    name: game.i18n.localize("hp.settings.countup.name"),
+    hint: game.i18n.localize("hp.settings.countup.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
+  game.settings.register("hurry-up", "overtime", {
+    name: game.i18n.localize("hp.settings.overtime.name"),
+    hint: game.i18n.localize("hp.settings.overtime.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("hurry-up", "size", {
     name: game.i18n.localize("hp.settings.size.name"),
     hint: game.i18n.localize("hp.settings.size.hint"),
