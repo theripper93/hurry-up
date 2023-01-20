@@ -13,6 +13,14 @@
                 "name": "Style",
                 "hint": "Style of the timer"
             },
+            "countup":{
+                "name": "Counting Up",
+                "hint": "Timer counts up instead of down (Digits and Circle styles only)"
+            },
+            "overtime":{
+                "name": "Overtime",
+                "hint": "Timer keeps running after maximum time allowance"
+            },
             "size":{
                 "name": "Size",
                 "hint": "Size of the timer"
@@ -31,7 +39,7 @@
 			},
             "goNext": {
                 "name": "Go Next",
-                "hint": "Go to next combatant when timer ends"
+                "hint": "Go to next combatant when timer ends. Does not trigger when overtime is allowed."
             },
 			"runForNpc": {
 				"name": "Run for NPC",

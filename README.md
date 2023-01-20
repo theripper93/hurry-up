@@ -15,3 +15,5 @@ Tired of those pesky players taking forever to then just swing a longsword after
 - **Critical**: Chose the duration of the timer and when it goes critical, at this point the progress bar will turn red and start blinking
 - **Sounds**: Play a looping sound when the timer goes critical (defaults to ticking) and a sound when the time is over
 - **Go Next**: Automatically advance the turn tracker when a timer ends
+- **Count Up**: Timer counts up like a stopwatch to show turn duration
+- **Overtime**: Open-ended timer without hard stop to softly shame slow players (visible in digit mode only)
