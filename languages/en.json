@@ -29,6 +29,14 @@
                 "name": "Windowless",
                 "hint": "Display the timer without a window"
             },
+	    "posTop":{
+                "name": "Vertical Position",
+                "hint": "Position of the window from the top. Default: 2"
+            },
+	    "posLeft":{
+                "name": "Horizontal Position",
+                "hint": "Position of the window from the right. Default 310"
+            },
             "critical":{
                 "name": "Critical Threshold",
                 "hint": "Threshold after which the timer will go critical and start blinking"
