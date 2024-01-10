@@ -383,7 +383,7 @@ class CombatTimer extends Application {
     if (!this.positioned){
       this.positioned = true;
       const top = game.settings.get("hurry-up", "posTop") ?? 2
-      const left = game.settings.get("hurry-up", "posLeft") ?? window.innerWidth - this.element.width() - 310;
+      const left = (window.innerWidth - this.element.width() - game.settings.get("hurry-up", "posLeft")) ?? (window.innerWidth - this.element.width() - 310);
       this.element.css({"top": top, "left": left});
       this.position.top = top;
       this.position.left = left;
