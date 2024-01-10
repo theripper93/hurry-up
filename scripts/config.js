@@ -78,6 +78,13 @@ Hooks.once("init", async function () {
     }
   });
 
+  game.settings.register("hurry-up", "position", {
+        scope: 'client',
+        config: false,
+        type: Object,
+        requiresReload: false,
+  });
+
   game.settings.register("hurry-up", "windowless", {
     name: game.i18n.localize("hp.settings.windowless.name"),
     hint: game.i18n.localize("hp.settings.windowless.hint"),
