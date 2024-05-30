@@ -78,13 +78,39 @@ Hooks.once("init", async function () {
     }
   });
 
+  game.settings.register("hurry-up", "posTop", {
+        name: game.i18n.localize("hp.settings.posTop.name"),
+        hint: game.i18n.localize("hp.settings.posTop.hint"),
+        scope: 'client',
+        config: true,
+        type: String,
+        default: 2,
+        requiresReload: false,
+        onChange: () => {
+          game.combatTimer.position.top;
+        }
+  });
+
+  game.settings.register("hurry-up", "posLeft", {
+        name: game.i18n.localize("hp.settings.posLeft.name"),
+        hint: game.i18n.localize("hp.settings.posLeft.hint"),
+        scope: 'client',
+        config: true,
+        type: String,
+        default: 310,
+        requiresReload: true,
+        onChange: () => {
+          game.combatTimer.position.left;
+        }
+  });
+
   game.settings.register("hurry-up", "windowless", {
     name: game.i18n.localize("hp.settings.windowless.name"),
     hint: game.i18n.localize("hp.settings.windowless.hint"),
     scope: "client",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     onChange: () => {
       if(game.combatTimer) game.combatTimer.updateWindowless();
     }
