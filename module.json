@@ -21,10 +21,8 @@
       "path": "languages/ja.json"
     }
   ],
-  "scripts": [
-    "scripts/main.js",
-    "scripts/config.js",
-    "scripts/module.js"
+  "esmodules": [
+    "scripts/main.js"
   ],
   "styles": [
     "styles/module.css"
@@ -36,11 +34,6 @@
   "id": "hurry-up",
   "relationships": {
     "requires": [
-      {
-        "id": "socketlib",
-        "type": "module",
-        "compatibility": {}
-      }
     ]
   },
   "compatibility": {
