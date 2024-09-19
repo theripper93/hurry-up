@@ -8,6 +8,7 @@ registerSettings();
 
 Hooks.once("init", () => {
     Socket.register("StartTimer", CombatTimer.socketTimer);
+    globalThis.CombatTimer = CombatTimer;
 });
 
 Hooks.on("canvasReady", () => {
