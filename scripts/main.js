@@ -44,7 +44,7 @@ Hooks.on("chatMessage", (chatLog, messageText, chatData) => {
         const time = match[2] ? parseTime(match[2].trim()) : undefined;
 
         if(match[2]) {
-            CombatTimer.createTimer(time, {isSecondary: true, paused});
+            CombatTimer.createTimer(time, {paused});
             return false;
         }
 
@@ -64,7 +64,6 @@ Hooks.on("chatMessage", (chatLog, messageText, chatData) => {
             CombatTimer.createTimer(
                 parseTime(data.time), 
                 {
-                    isSecondary: true,
                     name: data.name,
                     paused: !!data.paused,
                     color: data.color,

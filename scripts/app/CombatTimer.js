@@ -88,7 +88,7 @@ export class CombatTimer extends HandlebarsApplication {
         game.settings.set("hurry-up", "timersData", currentTimersData);
     }
 
-    static async setPause(id, paused, manual) {
+    static async setPause(id, paused, manual = true) {
         const currentTimersData = game.settings.get("hurry-up", "timersData") ?? {};
         const timerData = currentTimersData[id];
         
@@ -520,13 +520,13 @@ export class CombatTimer extends HandlebarsApplication {
                     condition: () => this.isManuallyPaused(),
                     name: `hp.contextMenu.unpause`,
                     icon: `<i class="fas fa-play"></i>`,
-                    callback: () => CombatTimer.setPause(this.options.id, false, true),
+                    callback: () => CombatTimer.setPause(this.options.id, false),
                 },
                 {
                     condition: () => !this.isManuallyPaused(),
                     name: `hp.contextMenu.pause`,
                     icon: `<i class="fas fa-pause"></i>`,
-                    callback: () => CombatTimer.setPause(this.options.id, true, true),
+                    callback: () => CombatTimer.setPause(this.options.id, true),
                 },
                 {
                     name: `hp.contextMenu.reset`,
@@ -587,7 +587,7 @@ export class CombatTimer extends HandlebarsApplication {
         CombatTimer.start({ time, name, isSecondary: true });
     }
 
-    static async createTimer(time, {name = "", isSecondary = false, color = null, paused = false, style = null} = {}) {
+    static async createTimer(time, {name = "", isSecondary = true, color = null, paused = false, style = null} = {}) {
         time = Number.isFinite(time) ? time : game.settings.get("hurry-up", "timerDuration");
         const currentTimersData = game.settings.get("hurry-up", "timersData") ?? {};
         let id;
@@ -610,7 +610,8 @@ export class CombatTimer extends HandlebarsApplication {
             color: color,
             style: style
         };
-        return await game.settings.set("hurry-up", "timersData", currentTimersData);
+        await game.settings.set("hurry-up", "timersData", currentTimersData);
+        return currentTimersData;
     }
 
     static async deleteTimer(id) {
@@ -624,7 +625,7 @@ export class CombatTimer extends HandlebarsApplication {
         const token = canvas.tokens.get(game?.combat?.current?.tokenId);
         const actor = token?.actor;
         if (game.settings.get("hurry-up", "runForNPC") || actor?.hasPlayerOwner) {
-            CombatTimer.createTimer();
+            CombatTimer.createTimer(false);
         } else {
             CombatTimer.deleteTimer("hurry-up");
         }
