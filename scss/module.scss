@@ -1,0 +1,123 @@
+:root {
+  --hurry-up-font-size: 6em;
+}
+
+.hurry-up {
+  width: auto;
+  height: auto;
+
+  .window-content {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 0 0 5px 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  .window-header {
+
+    button {
+      display: none;
+    }
+
+    &.windowless {
+      height: 0;
+    }
+  }
+
+  &.paused {
+    opacity: 0.5;
+  }
+
+  .hurry-up-timer-text {
+    font-size: var(--hurry-up-font-size);
+    // color: var(--hurry-up-base-color);
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, .75));
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    line-height: 1em;
+    width: 100%;
+    margin-top: -0.3rem;
+    z-index: 20;
+  }
+
+  .hurry-up-counter-text {
+    font-size: var(--hurry-up-font-size);
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, .75));
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    line-height: 1em;
+    width: 100%;
+    margin-top: -0.3rem;
+    z-index: 20;
+  }
+
+  .counter-window {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+
+    .hurry-up-timer {
+      display: flex;
+      position: relative;
+      width: fit-content;
+
+      button {
+        height: 100%;
+        width: 4rem;
+        flex: 1;
+      }
+
+      span {
+        flex: 2;
+      }
+    }
+  }
+
+  .main-window {
+    display: flex;
+  }
+
+  .hurry-up-bar {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    border-radius: 5px;
+    z-index: 10;
+    height: 100%;
+    // width: 100%;
+    // background: var(--hurry-up-bar-color);
+    opacity: 0.2;
+    transition: width 0.4s ease-out;
+    pointer-events: none;
+  }
+
+  .blinking {
+    animation: blinking-text 1s ease infinite;
+  }
+
+  &.window-app.windowless {
+    background: unset;
+    box-shadow: unset;
+
+    &:hover {
+      background: url(/ui/denim075.png) repeat;
+      box-shadow: 0 0 20px var(--color-shadow-dark);
+
+      > .window-header.windowless {
+        height: 10px;
+      }
+    }
+  }
+}
+
+@keyframes blinking-text {
+  50% {
+    opacity: 0%;
+  }
+}
