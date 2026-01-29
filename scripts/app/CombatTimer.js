@@ -647,4 +647,11 @@ export class CombatTimer extends HandlebarsApplication {
             }
         }
     }
+
+    static unFuckSetting(force = false) {
+        if(force) return game.settings.set("hurry-up", "timersData", {});
+        if(game.settings.get("hurry-up", "timersData") instanceof Boolean) {
+            return game.settings.set("hurry-up", "timersData", {});
+        }
+    }
 }

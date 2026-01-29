@@ -13,7 +13,10 @@ Hooks.once("init", () => {
     globalThis.CombatTimer = CombatTimer;
 });
 
-Hooks.on("ready", () => {
+Hooks.on("ready", async() => {
+    if(game.user.isGM) {
+        await CombatTimer.unFuckSetting();
+    }
     CombatTimer.updateAndSync();
 });
 

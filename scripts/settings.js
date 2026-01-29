@@ -8,7 +8,7 @@ export function registerSettings() {
       scope: "world",
       config: false,
       type: Object,
-      default: false,
+      default: {},
       onChange: () => {
         CombatTimer.updateAndSync();
       }
