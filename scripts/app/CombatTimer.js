@@ -401,15 +401,12 @@ export class CombatTimer extends HandlebarsApplication {
     }
 
     updateWindowless() {
-        // const windowAppElement = document.querySelector(".hurry-up");
-        const windowHeaderElement = this.element.getElementsByClassName("window-header");
-        if (!windowHeaderElement.length) return;
+        const windowHeaderElement = this.element.querySelector(".window-header");
+        if (!windowHeaderElement) return;
         if (game.settings.get("hurry-up", "windowless")) {
-            this.element.classList.add("windowless");
-            windowHeaderElement[0].classList.add("windowless");
+            windowHeaderElement.classList.add("windowless");
         } else {
-            this.element.classList.remove("windowless");
-            windowHeaderElement[0].classList.remove("windowless");
+            windowHeaderElement.classList.remove("windowless");
         }
     }
 

@@ -16,17 +16,6 @@
     align-items: center;
   }
 
-  .window-header {
-
-    button {
-      display: none;
-    }
-
-    &.windowless {
-      height: 0;
-    }
-  }
-
   &.paused {
     opacity: 0.5;
   }
@@ -101,17 +90,32 @@
     animation: blinking-text 1s ease infinite;
   }
 
-  &.window-app.windowless {
-    background: unset;
-    box-shadow: unset;
+  .window-header {
+    height: var(--header-height);
+    flex: 0 0 auto;
+    transition: height 0.2s ease-out;
 
-    &:hover {
-      background: url(/ui/denim075.png) repeat;
-      box-shadow: 0 0 20px var(--color-shadow-dark);
+    button {
+      display: none;
+    }
 
-      > .window-header.windowless {
-        height: 10px;
-      }
+    &.windowless { 
+      --header-height: 0;
+      border: none;
+    }
+  }
+
+  &:hover {
+    .window-header.windowless {
+      --header-height: unset;
+      border: unset;
+    }
+  }
+
+  &.minimized {
+    .window-header.windowless {
+      --header-height: unset;
+      border: unset;
     }
   }
 }
