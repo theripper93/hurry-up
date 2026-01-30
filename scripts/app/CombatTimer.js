@@ -622,7 +622,7 @@ export class CombatTimer extends HandlebarsApplication {
         const token = canvas.tokens.get(game?.combat?.current?.tokenId);
         const actor = token?.actor;
         if (game.settings.get("hurry-up", "runForNPC") || actor?.hasPlayerOwner) {
-            CombatTimer.createTimer(false);
+            CombatTimer.createTimer(undefined, {isSecondary: false});
         } else {
             CombatTimer.deleteTimer("hurry-up");
         }
