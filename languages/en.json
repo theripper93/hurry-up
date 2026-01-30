@@ -50,7 +50,7 @@
 			},
             "goNext": {
                 "name": "Go Next",
-                "hint": "Go to next combatant when timer ends. Does not trigger when overtime is allowed."
+                "hint": "Go to next combatant when timer ends."
             },
 			"runForNpc": {
 				"name": "Run for NPC",
