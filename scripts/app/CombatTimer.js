@@ -70,6 +70,7 @@ export class CombatTimer extends HandlebarsApplication {
             this.timeRemaining = this.time;
         }
         this.hasEnded = this.timeRemaining <= 0;
+        this.onCriticalEnd();
         if(render) this.render();
     }
 
@@ -206,13 +207,13 @@ export class CombatTimer extends HandlebarsApplication {
             this.timeElapsed = this.timeNow - this.startedAt - this.pausedFor;
             this.timeRemaining = this.time - Math.floor(this.timeElapsed / 1000);
             this.timeRemaining = Math.max(this.timeRemaining, 0);
+            this.checkCritical();
         } else {
             if (this.critSound?.playing) this.critSound?.pause();
         }
 
         if (!this.isPaused() || forceRender) {
             this.updateVisuals();
-            this.checkCritical();
             if (this.timeRemaining <= 0 && !this.hasEnded) {
                 this.onEnd();
                 this.hasEnded = true;
@@ -463,7 +464,7 @@ export class CombatTimer extends HandlebarsApplication {
     async onCritical() {
         this.critSound?.stop();
         const soundP = game.settings.get("hurry-up", "critSoundPath");
-        if (soundP) this.critSound = await foundry.audio.AudioHelper.play({ src: soundP, autoplay: true, volume: game.settings.get("hurry-up", "soundVol"), loop: true }, false);
+        if (soundP && !this.isPaused()) this.critSound = await foundry.audio.AudioHelper.play({ src: soundP, autoplay: true, volume: game.settings.get("hurry-up", "soundVol"), loop: true }, false);
     }
 
     async onCriticalEnd() {
