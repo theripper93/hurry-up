@@ -40,6 +40,9 @@ Hooks.on("pauseGame", async (paused) => {
 
 Hooks.on("chatMessage", (chatLog, messageText, chatData) => {
     if (!game.user.isGM) return true;
+    const div = document.createElement("div");
+    div.innerHTML = messageText;
+    messageText = div.innerText;
     const match = messageText.match(/^\/(?:hurry|timer)(\?)?(?:\s+((?:\d+[:hms]?)+))?/i);
     
     if (match) {
